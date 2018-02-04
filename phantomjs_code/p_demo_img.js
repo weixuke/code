@@ -15,7 +15,6 @@ var output = "img_gao_qing_zhaosheng.png";
 
 
 page.open(url_address, function (status) {
-
 	if (status !== 'success') {
         console.log('Unable to load this '+url_address+' url!');
         phantom.exit(1);

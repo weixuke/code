@@ -47,7 +47,7 @@ var dateFormat = "yyyy-MM-dd hh:mm:ss";
 //获得系统操作对象
 var system = require('system');
 var fs = require('fs');
-var page = require('webpage').create();
+
 //{'url':'http://www.baidu.com','savePath':'D:\\temp\\baidu.png','logPath':'d:\\temp\\js_log.log','viewWidth':'2479','viewHeight':'3508','ps_top':'0','ps_left':'0','ps_width':'2479','ps_height':'3508','waitTime':'5000'}
 //获得参数对象
 var json = system.args[1];
@@ -97,7 +97,6 @@ if(checkParamer(json.url)&&
     ps_height = json.ps_height;
 	waitTime = json.waitTime;
 	
-	log("-----------------------------------------");
 	log("url = "+url);
 	log("savePath = "+savePath);
 	log("logPath = "+logPath);
@@ -108,79 +107,43 @@ if(checkParamer(json.url)&&
 	log("ps_width = "+ps_width);
 	log("ps_height = "+ps_height);
 	log("waitTime = "+waitTime);
-	console.log("start....");
-	var url_address = "https://test-static.bestjlb.com/application?tid=44&type=20&orgId=1000000019&activeCode=APP_PIC_HanJiaTeHui&access_token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiIxMDEwNDA1IiwiaXNvbGF0aW9uIjoiYmVzdGpsYiIsImV4cCI6MTUxNzM4NDI5NCwidHlwZSI6IkFORFJPSUQiLCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwianRpIjoiZjljMzQzNzUtNjUzYy00YWQwLTg4MDItMGVmM2NjNDc4MTY5In0.p3TjFC15YUrhgZ3LZHtLp8c9BH8ZzCNcAegg49YxPtTH6NKcZcZhVdx-W2ryodMcYjNPbdjldkzg_Wdy1gfraQ";
-	var output = "img_gao_qing_zhaosheng.png";
 	
-	//page.open(url_address, function (status) {
-	//	console.log('test!');
-	//	if (status !== 'success') {
-	//		console.log('Unable to load this '+url_address+' url_address!');
-	//		phantom.exit(1);
-	//	} else {
-	//		window.setTimeout(function () {
-	//			/*
-	//			// 通过在页面上执行脚本获取页面的渲染高度
-	//			var bb = page.evaluate(function () { 
-	//				return document.getElementsByTagName('html')[0].getBoundingClientRect(); 
-	//			});
-	//			//page.viewportSize = { width: viewWidth, height: viewHeight};
-	//			//page.zoomFactor = viewWidth/bb.width;
-	//			
-	//			console.log("html top="+bb.top+" left="+bb.left+" width="+bb.width+" heigth="+bb.height +
-	//				" realWidth="+bb.scrollWidth+//页面真是宽度
-	//				""+bb.scrollHeidth);//页面真是高度
-	//			*/
-	//			/*{ width: size[0], height: size[1], margin: '0px' }*/
-	//			//page.paperSize = {width: img_width, height: img_height, margin: '0px'};
-	//							
-	//			// 通过clipRect可以指定渲染的区域：
-	//			//page.clipRect = { top: ps_top, left: ps_left, width: ps_width, height: ps_height };
-	//			page.render(output);
-	//			console.log('success!');
-	//			phantom.exit();
-	//		}, waitTime);
-	//	}
-	//});
+	printScreen(url);
 }else{
 	console.log("param undefined");
 }
 
-	var url_address = "https://test-static.bestjlb.com/application?tid=44&type=20&orgId=1000000019&activeCode=APP_PIC_HanJiaTeHui&access_token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiIxMDEwNDA1IiwiaXNvbGF0aW9uIjoiYmVzdGpsYiIsImV4cCI6MTUxNzM4NDI5NCwidHlwZSI6IkFORFJPSUQiLCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwianRpIjoiZjljMzQzNzUtNjUzYy00YWQwLTg4MDItMGVmM2NjNDc4MTY5In0.p3TjFC15YUrhgZ3LZHtLp8c9BH8ZzCNcAegg49YxPtTH6NKcZcZhVdx-W2ryodMcYjNPbdjldkzg_Wdy1gfraQ";
-	var output = "img_gao_qing_zhaosheng.png";
-	
-	page.open(url_address, function (status) {
-		
+function printScreen(url){
+	var page = require('webpage').create();
+	page.open(url, function (status) {
 		if (status !== 'success') {
-			console.log('Unable to load this '+url_address+' url_address!');
+			console.log('Unable to load this '+url+' url!');
 			phantom.exit(1);
 		} else {
 			window.setTimeout(function () {
-				/*
 				// 通过在页面上执行脚本获取页面的渲染高度
 				var bb = page.evaluate(function () { 
 					return document.getElementsByTagName('html')[0].getBoundingClientRect(); 
 				});
-				//page.viewportSize = { width: viewWidth, height: viewHeight};
-				//page.zoomFactor = viewWidth/bb.width;
-				
+				page.viewportSize = { width: viewWidth, height: viewHeight};
+				page.zoomFactor = viewWidth/bb.width;
+				/**/
 				console.log("html top="+bb.top+" left="+bb.left+" width="+bb.width+" heigth="+bb.height +
 					" realWidth="+bb.scrollWidth+//页面真是宽度
 					""+bb.scrollHeidth);//页面真是高度
-				*/
 				/*{ width: size[0], height: size[1], margin: '0px' }*/
-				//page.paperSize = {width: img_width, height: img_height, margin: '0px'};
-								
+				page.paperSize = { 
+									width: img_width, height: img_height, margin: '0px'
+								};
 				// 通过clipRect可以指定渲染的区域：
-				//page.clipRect = { top: ps_top, left: ps_left, width: ps_width, height: ps_height };
+				page.clipRect = { top: ps_top, left: ps_left, width: ps_width, height: ps_height };
 				page.render(output);
 				console.log('success!');
 				phantom.exit();
-			}, 1000);
-			
+			}, waitTime);
 		}
 	});
-
+}
 
 
 phantom.exit();
