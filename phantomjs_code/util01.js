@@ -26,10 +26,10 @@ var fs = require('fs');
 
 //网页地址,如：http://www.baidu.com
 var url = "";
-//图片保存地址,如：D:\work_note\htmlToImg\demo_phantomjs\html_.png
-var savePath = "";
+//图片保存地址,如：D:\work_note\htmlToImg\demo_phantomjs
+var imgSavePath = "";
 //日志输出地址,如：
-var logPath = "D:/temp/log.log";
+var logPath = "/service/server/phantomjs-dir/log/pjs_init.log";
 //浏览器宽度
 var viewWidth = 0;
 //浏览器高度
@@ -60,11 +60,13 @@ var json_str = system.args[1];
 
 if(!checkParamer(json_str)){
 	log("params is null!");
-	console.log(SERVER_INIT_PARAMS_ERROR);
+	console.log(SERVER_INIT_PARAMS_ERROR+" json_str="+json_str);
 	phantom.exit();
 }
 
 var json = eval('(' + json_str + ')');
+//json = json_str.parseJSON();
+
 var page;
 
 
@@ -99,13 +101,31 @@ var listen = function(type) {
 	    		phantom.exit();
 	    	}
 	    	var arg = eval('(' + args + ')');
-	    	//"{'savePath':'test.png','url':'http://www.baidu.com'}"		
+	    	//"{'imgSavePath':'test.png','url':'http://www.baidu.com'}"		
 	    	if(checkParamer(arg)&&
 	    	   checkParamer(arg.url)&&
-	    	   checkParamer(arg.savePath)
+	    	   checkParamer(arg.imgName)&&
+	    	   checkParamer(arg.key)
 	    	){
+				var p_viewWidth = 0;
+				var p_viewHeight = 0;
+				
+				if(0!=arg.ps_width){
+					p_viewWidth = arg.ps_width;
+				}else{
+					p_viewWidth = viewWidth;
+				}
+				
+				if(0!=arg.ps_height){
+					p_viewHeight = arg.ps_height;
+				}else{
+					p_viewHeight = viewHeight
+				}
+				
+				var p_viewWidth
+				
 	    		var url = arg.url;
-	    	    var savePath = arg.savePath;
+	    	    var imgName = arg.imgName;
 	    		var key = arg.key;
 	    		log("key = " + key + " start");
 	    	    page.open(url, function (status) {
@@ -117,9 +137,9 @@ var listen = function(type) {
                     } else {
 	    	        	log(" open page success ");
                         window.setTimeout(function () {
-	    					page.paperSize = {width: viewWidth, height: viewHeight, margin: '0px'};
-                            page.clipRect = { top: 0, left: 0, width: viewWidth, height: viewHeight };
-	    					page.render(savePath);
+	    					//page.paperSize = {width: viewWidth, height: viewHeight, margin: '0px'};
+                            page.clipRect = { top: 0, left: 0, width: p_viewWidth, height: p_viewHeight };
+	    					page.render(imgSavePath+imgName);
 	    					system.stdout.writeLine(HTML_TO_IMG_SUCCESS+","+key); 
 	    					system.stdout.flush();
 	    	        		log(" render success ");
@@ -152,7 +172,9 @@ function log(content){
 }
 
 function checkParamer(arg){
-	if(arg){
+	log("check "+arg);
+	if(undefined!=arg&&""!=arg){
+		log(arg+"true");
 		return true;
 	}else{
 		if(0==arg){
@@ -161,8 +183,23 @@ function checkParamer(arg){
 		return false;
 	}
 }
+log(json);
+log(checkParamer(json.logPath));
+log(checkParamer(json.imgSavePath));
+log(checkParamer(json.viewWidth));
+log(checkParamer(json.viewHeight));
+log(checkParamer(json.ps_top));
+log(checkParamer(json.ps_left));
+log(checkParamer(json.ps_width));
+log(checkParamer(json.ps_height));
+log(checkParamer(json.waitTime));
+
+
+
+
 //"{'logPath':'test','viewWidth':'800','viewHeight':'600','ps_top':0,'ps_left':0,'ps_width':800,'ps_height':600,'waitTime':1000}"
 if(checkParamer(json.logPath)&&
+   checkParamer(json.imgSavePath)&&
    checkParamer(json.viewWidth)&&
    checkParamer(json.viewHeight)&&
    checkParamer(json.ps_top)&&
@@ -172,6 +209,7 @@ if(checkParamer(json.logPath)&&
    checkParamer(json.waitTime)
    ){
     logPath = json.logPath;
+	imgSavePath = json.imgSavePath;
     viewWidth = json.viewWidth;
     viewHeight = json.viewHeight;
     ps_top = json.ps_top;
@@ -182,6 +220,7 @@ if(checkParamer(json.logPath)&&
 	
     log("-------- phantom "+pid+" server init --------");
     log("logPath = "+logPath);
+	log("imgSavePath = "+imgSavePath);
     log("viewWidth = "+viewWidth);
     log("viewHeight = "+viewHeight);
     log("ps_top = "+ps_top);
